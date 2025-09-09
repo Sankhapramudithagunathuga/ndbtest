@@ -17,9 +17,9 @@ phases:
       - echo Running NeuVector Scan...
       - docker run --rm -v /var/run/docker.sock:/var/run/docker.sock neuvector/scanner:latest scan -r $IMAGE_REPO_NAME:$IMAGE_TAG > scan_result.json
 
-      # Print scan summary in logs
-      - echo "NeuVector scan completed. Summary:"
-      - cat scan_result.json | jq '.summary'
+      # Print first few lines for debugging (avoid jq failure)
+      - echo "NeuVector scan completed. Showing first lines of scan_result.json:"
+      - head -n 30 scan_result.json
 
   post_build:
     commands:
