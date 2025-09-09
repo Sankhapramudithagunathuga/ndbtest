@@ -13,13 +13,13 @@ phases:
       - docker build -t $IMAGE_REPO_NAME:$IMAGE_TAG .
       - docker tag $IMAGE_REPO_NAME:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
 
-      # Run NeuVector Scan from your private ECR mirror
-      - echo Running NeuVector Scan from private ECR...
-      - docker run --rm -v /var/run/docker.sock:/var/run/docker.sock $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/neuvector-scanner:latest scan -r $IMAGE_REPO_NAME:$IMAGE_TAG > scan_result.json
+      # # Run NeuVector Scan from your private ECR mirror
+      # - echo Running NeuVector Scan from private ECR...
+      # - docker run --rm -v /var/run/docker.sock:/var/run/docker.sock $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/neuvector-scanner:latest scan -r $IMAGE_REPO_NAME:$IMAGE_TAG > scan_result.json
 
-      # Print first 30 lines for quick view
-      - echo "NeuVector scan completed. Showing first lines of scan_result.json:"
-      - head -n 30 scan_result.json
+      # # Print first 30 lines for quick view
+      # - echo "NeuVector scan completed. Showing first lines of scan_result.json:"
+      # - head -n 30 scan_result.json
 
   post_build:
     commands:
