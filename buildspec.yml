@@ -5,14 +5,34 @@ phases:
     commands:
       - echo Logging in to Amazon ECR...
       - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+  
   build:
     commands:
       - echo Build started on `date`
       - echo Building the Docker image...
       - docker build -t $IMAGE_REPO_NAME:$IMAGE_TAG .
       - docker tag $IMAGE_REPO_NAME:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
+
+      # Run NeuVector Scan
+      - echo Running NeuVector Scan...
+      - docker run --rm -v /var/run/docker.sock:/var/run/docker.sock neuvector/scanner:latest scan -r $IMAGE_REPO_NAME:$IMAGE_TAG > scan_result.json
+      
+      # Fail build if high vulnerabilities found
+      - |
+        if grep -q '"High": [1-9]' scan_result.json; then
+          echo "❌ High vulnerabilities found. Failing build."
+          cat scan_result.json
+          exit 1
+        else
+          echo "✅ No high vulnerabilities found."
+        fi
+
   post_build:
     commands:
       - echo Build completed on `date`
       - echo Pushing the Docker image...
       - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
+
+artifacts:
+  files:
+    - scan_result.json
