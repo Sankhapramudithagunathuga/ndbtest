@@ -20,7 +20,7 @@ phases:
 
       # Run NeuVector scan from your private ECR mirror
       - echo Running NeuVector Scan...
-      - docker run --rm -v /var/run/docker.sock:/var/run/docker.sock $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/neuvector-scanner:latest -i $REPOSITORY_URI:latest > scan_result.json
+      - docker run --rm -v /var/run/docker.sock:/var/run/docker.sock $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/neuvector-scanner:latest -i $REPOSITORY_URI:$IMAGE_TAG > scan_result.json
 
       # Print preview of scan results
       - echo "NeuVector scan completed. Showing first lines of scan_result.json:"
